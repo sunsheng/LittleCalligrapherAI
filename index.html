@@ -245,8 +245,8 @@
                     outlineColor: '#ddd',
                     drawingColor: '#333',
                     drawingWidth: 20,
-                    delayBetweenStrokes: 300,
-                    strokeAnimationSpeed: 2,
+                    delayBetweenStrokes: 500,
+                    strokeAnimationSpeed: 1,
                     charDataLoader: (char) => {
                         return fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
                             .then(res => res.json());
