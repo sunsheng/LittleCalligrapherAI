@@ -24,14 +24,14 @@ export const StrokeOrderModal: React.FC<StrokeOrderModalProps> = ({ char, onClos
     writer.showOutline();
     
     writer.quiz({
-      onMistake: function(strokeData: any) {
+      onMistake: function(_strokeData: any) {
         setStatus('笔画顺序不对哦，再试一次 😅');
       },
       onCorrectStroke: function(strokeData: any) {
         // strokeData.strokeNum is 0-indexed
         setStatus(`正确！(${strokeData.strokeNum + 1}/${totalStrokesRef.current}) 👍`);
       },
-      onComplete: function(summaryData: any) {
+      onComplete: function(_summaryData: any) {
         setStatus('太棒了！挑战成功 🎉');
         // Do NOT restart animation here per requirements
       }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CharacterGrid } from './components/CharacterGrid';
 import { StrokeOrderModal } from './components/StrokeOrderModal';
 import { GRID_OPTIONS, GridType, PRESET_TOPICS } from './types';
