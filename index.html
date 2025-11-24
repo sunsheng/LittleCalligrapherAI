@@ -1,33 +1,387 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>小小书法家 - AI练字</title>
-    <meta name="description" content="小学生在线练字生成器" />
-    <!-- Scripts removed: Tailwind CDN and config, styles moved to index.css -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小小书法家 - 练字应用</title>
+    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.19.6/dist/index.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
-    "hanzi-writer": "https://aistudiocdn.com/hanzi-writer@^3.7.3",
-    "vite": "https://aistudiocdn.com/vite@^7.2.4",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
-    "path": "https://aistudiocdn.com/path@^0.12.7",
-    "url": "https://aistudiocdn.com/url@^0.11.4",
-    "https": "https://aistudiocdn.com/https@^1.0.0",
-    "fs": "https://aistudiocdn.com/fs@^0.0.1-security"
-  }
-}
-</script>
-  <script type="module" crossorigin src="./assets/index-CWTU6lId.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-HYcFIpF5.css">
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .score {
+            background: #ffd700;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .character-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pinyin {
+            font-size: 24px;
+            color: #666;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 20px;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        #strokeDemo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 300px;
+            z-index: 3;
+        }
+
+        #guideCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #drawCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: crosshair;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f56565;
+            color: white;
+        }
+
+        #charInput {
+            width: 100%;
+            padding: 12px;
+            font-size: 20px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            text-align: center;
+            outline: none;
+        }
+
+        #charInput:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .canvas-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            #guideCanvas, #drawCanvas {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    </style>
 </head>
-  <body class="bg-amber-50 min-h-screen text-slate-800">
-    <div id="root"></div>
-  </body>
+<body>
+    <div class="container">
+        <header>
+            <h1>✏️ 小小书法家</h1>
+            <div class="score">得分: <span id="score">0</span></div>
+        </header>
+
+        <div class="main-content">
+            <div class="character-display">
+                <div class="pinyin" id="pinyin">zì</div>
+            </div>
+
+            <div class="canvas-container">
+                <div id="strokeDemo"></div>
+                <canvas id="guideCanvas" width="300" height="300"></canvas>
+                <canvas id="drawCanvas" width="300" height="300"></canvas>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" onclick="app.showStroke()">笔画演示</button>
+                <button class="btn btn-secondary" onclick="app.clearCanvas()">清空重写</button>
+            </div>
+
+            <input type="text" id="charInput" placeholder="输入汉字练习" maxlength="1">
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            currentChar: '字',
+            currentPinyin: 'zì',
+            score: 0,
+            currentCharScore: 0,
+            totalStrokes: 0,
+            isDrawing: false,
+            writer: null,
+            
+            init() {
+                this.guideCanvas = document.getElementById('guideCanvas');
+                this.drawCanvas = document.getElementById('drawCanvas');
+                this.guideCtx = this.guideCanvas.getContext('2d');
+                this.drawCtx = this.drawCanvas.getContext('2d');
+                
+                this.setupCanvas();
+                this.drawGuide();
+                this.initWriter();
+            },
+            
+            initWriter() {
+                const target = document.getElementById('strokeDemo');
+                console.log('Creating writer on:', target);
+                
+                this.writer = HanziWriter.create('strokeDemo', this.currentChar, {
+                    width: 300,
+                    height: 300,
+                    padding: 20,
+                    showOutline: true,
+                    showCharacter: true,
+                    strokeColor: '#667eea',
+                    radicalColor: '#667eea',
+                    outlineColor: '#ddd',
+                    drawingColor: '#333',
+                    drawingWidth: 20,
+                    delayBetweenStrokes: 100,
+                    strokeAnimationSpeed: 3,
+                    charDataLoader: (char) => {
+                        return fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
+                            .then(res => res.json());
+                    }
+                });
+                
+                console.log('Writer created:', this.writer);
+                
+                // 获取初始字的笔画数
+                fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${this.currentChar}.json`)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.totalStrokes = data.strokes.length;
+                        console.log('Total strokes:', this.totalStrokes);
+                    });
+                
+                // 启用笔顺测验
+                setTimeout(() => {
+                    this.startQuiz();
+                }, 1000);
+                
+                // 监听输入框
+                document.getElementById('charInput').addEventListener('input', (e) => {
+                    const char = e.target.value;
+                    if (char && /[\u4e00-\u9fa5]/.test(char)) {
+                        this.setChar(char, char);
+                    }
+                });
+            },
+            
+            startQuiz() {
+                if (!this.writer) {
+                    console.error('Writer not initialized');
+                    return;
+                }
+                console.log('Starting quiz for char:', this.currentChar);
+                
+                try {
+                    this.writer.quiz({
+                        onMistake: (strokeData) => {
+                            console.log('❌ 笔顺错误', strokeData);
+                        },
+                        onCorrectStroke: (strokeData) => {
+                            console.log('✅ 笔顺正确', strokeData);
+                            const strokeScore = Math.floor(70 / this.totalStrokes);
+                            this.currentCharScore += strokeScore;
+                            this.score += strokeScore;
+                            document.getElementById('score').textContent = this.score;
+                        },
+                        onComplete: () => {
+                            console.log('🎉 完成');
+                            const completeBonus = 100 - this.currentCharScore;
+                            this.currentCharScore = 100;
+                            this.score += completeBonus;
+                            document.getElementById('score').textContent = this.score;
+                            this.writer.showCharacter({ duration: 500 });
+                        }
+                    });
+                    console.log('✓ Quiz started successfully');
+                } catch(e) {
+                    console.error('Quiz error:', e);
+                }
+            },
+            
+            setupCanvas() {
+                const ctx = this.guideCtx;
+                ctx.strokeStyle = '#e0e0e0';
+                ctx.lineWidth = 1;
+                
+                ctx.beginPath();
+                ctx.moveTo(150, 0);
+                ctx.lineTo(150, 300);
+                ctx.moveTo(0, 150);
+                ctx.lineTo(300, 150);
+                ctx.stroke();
+                
+                ctx.strokeStyle = '#f0f0f0';
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(300, 300);
+                ctx.moveTo(300, 0);
+                ctx.lineTo(0, 300);
+                ctx.stroke();
+            },
+            
+            drawGuide() {
+                this.guideCtx.clearRect(0, 0, 300, 300);
+                this.setupCanvas();
+            },
+            
+            clearCanvas() {
+                if (this.writer) {
+                    this.score -= this.currentCharScore;
+                    this.currentCharScore = 0;
+                    document.getElementById('score').textContent = this.score;
+                    
+                    this.writer.cancelQuiz();
+                    setTimeout(() => {
+                        this.startQuiz();
+                    }, 100);
+                }
+            },
+            
+            showStroke() {
+                if (this.writer) {
+                    this.writer.cancelQuiz();
+                    this.writer.hideCharacter();
+                    this.writer.animateCharacter({
+                        onComplete: () => {
+                            this.writer.showCharacter({ duration: 500 });
+                            setTimeout(() => {
+                                this.clearCanvas();
+                            }, 1500);
+                        }
+                    });
+                }
+            },
+            
+            setChar(char, pinyin) {
+                this.currentChar = char;
+                
+                if (typeof pinyinPro !== 'undefined') {
+                    this.currentPinyin = pinyinPro.pinyin(char, { toneType: 'symbol' });
+                } else {
+                    this.currentPinyin = pinyin;
+                }
+                
+                document.getElementById('pinyin').textContent = this.currentPinyin;
+                this.drawGuide();
+                
+                if (this.writer) {
+                    this.writer.cancelQuiz();
+                    this.writer.setCharacter(char).then(() => {
+                        this.writer.showCharacter();
+                        fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
+                            .then(res => res.json())
+                            .then(data => {
+                                this.totalStrokes = data.strokes.length;
+                                console.log('Total strokes:', this.totalStrokes);
+                                this.currentCharScore = 0;
+                                setTimeout(() => {
+                                    this.startQuiz();
+                                }, 100);
+                            });
+                    });
+                }
+            }
+        };
+
+        window.addEventListener('load', () => {
+            app.init();
+        });
+    </script>
+</body>
 </html>
