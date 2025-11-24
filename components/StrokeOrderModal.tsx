@@ -72,6 +72,9 @@ export const StrokeOrderModal: React.FC<StrokeOrderModalProps> = ({ char, onClos
         showOutline: true,
         strokeAnimationSpeed: 1, // standard speed
         delayBetweenStrokes: 200,
+        drawingWidth: 40, // Increased from default (20) to 40 for thicker strokes
+        strokeColor: '#333', // Dark color for the "ink"
+        outlineColor: '#d4d4d8', // Light gray for the outline
         onLoadCharData: (charData: any) => {
             totalStrokesRef.current = charData.strokes.length;
         }
@@ -123,10 +126,10 @@ export const StrokeOrderModal: React.FC<StrokeOrderModalProps> = ({ char, onClos
           <div className="relative bg-white rounded-xl shadow-inner border border-slate-200">
               {/* Custom Grid Background behind canvas */}
               <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full pointer-events-none opacity-30">
-                  <line x1="0" y1="0" x2="100" y2="100" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4 2" />
-                  <line x1="100" y1="0" x2="0" y2="100" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4 2" />
-                  <line x1="50" y1="0" x2="50" y2="100" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4 2" />
-                  <line x1="0" y1="50" x2="100" y2="50" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4 2" />
+                  <line x1="0" y1="0" x2="100" y2="100" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="4 2" />
+                  <line x1="100" y1="0" x2="0" y2="100" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="4 2" />
+                  <line x1="50" y1="0" x2="50" y2="100" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="4 2" />
+                  <line x1="0" y1="50" x2="100" y2="50" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="4 2" />
               </svg>
               <div ref={containerRef} className="cursor-crosshair touch-none" />
           </div>

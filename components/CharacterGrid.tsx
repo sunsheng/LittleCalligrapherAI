@@ -29,7 +29,8 @@ export const CharacterGrid: React.FC<CharacterGridProps> = ({
       <GridBackground type={gridType} />
       
       {/* Character Display */}
-      <div className="absolute inset-0 flex items-center justify-center font-kaiti text-[6rem] leading-none pointer-events-none text-gray-800">
+      {/* Added font-bold to thicken the strokes */}
+      <div className="absolute inset-0 flex items-center justify-center font-kaiti font-bold text-[6rem] leading-none pointer-events-none text-gray-800">
         {char}
       </div>
       
