@@ -1,0 +1,5 @@
+{
+  "name": "Little Calligrapher AI",
+  "description": "An interactive Chinese handwriting practice application for elementary students. Features custom grids (Tian Zi Ge, Mi Zi Ge), digital writing practice, printable worksheets, and AI-generated practice content.",
+  "requestFramePermissions": []
+}
