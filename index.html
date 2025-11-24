@@ -154,13 +154,18 @@
             }
             
             .canvas-container {
-                width: 250px;
-                height: 250px;
+                width: 280px;
+                height: 280px;
+            }
+            
+            #strokeDemo {
+                width: 280px;
+                height: 280px;
             }
             
             #guideCanvas, #drawCanvas {
-                width: 250px;
-                height: 250px;
+                width: 280px;
+                height: 280px;
             }
         }
     </style>
@@ -217,9 +222,21 @@
                 const target = document.getElementById('strokeDemo');
                 console.log('Creating writer on:', target);
                 
+                // 根据屏幕尺寸调整canvas大小
+                const isMobile = window.innerWidth <= 600;
+                const size = isMobile ? 280 : 300;
+                
+                if (isMobile) {
+                    this.guideCanvas.width = size;
+                    this.guideCanvas.height = size;
+                    this.drawCanvas.width = size;
+                    this.drawCanvas.height = size;
+                    this.setupCanvas();
+                }
+                
                 this.writer = HanziWriter.create('strokeDemo', this.currentChar, {
-                    width: 300,
-                    height: 300,
+                    width: size,
+                    height: size,
                     padding: 20,
                     showOutline: true,
                     showCharacter: true,
@@ -296,27 +313,30 @@
             
             setupCanvas() {
                 const ctx = this.guideCtx;
+                const size = this.guideCanvas.width;
+                const half = size / 2;
+                
                 ctx.strokeStyle = '#e0e0e0';
                 ctx.lineWidth = 1;
                 
                 ctx.beginPath();
-                ctx.moveTo(150, 0);
-                ctx.lineTo(150, 300);
-                ctx.moveTo(0, 150);
-                ctx.lineTo(300, 150);
+                ctx.moveTo(half, 0);
+                ctx.lineTo(half, size);
+                ctx.moveTo(0, half);
+                ctx.lineTo(size, half);
                 ctx.stroke();
                 
                 ctx.strokeStyle = '#f0f0f0';
                 ctx.beginPath();
                 ctx.moveTo(0, 0);
-                ctx.lineTo(300, 300);
-                ctx.moveTo(300, 0);
-                ctx.lineTo(0, 300);
+                ctx.lineTo(size, size);
+                ctx.moveTo(size, 0);
+                ctx.lineTo(0, size);
                 ctx.stroke();
             },
             
             drawGuide() {
-                this.guideCtx.clearRect(0, 0, 300, 300);
+                this.guideCtx.clearRect(0, 0, this.guideCanvas.width, this.guideCanvas.height);
                 this.setupCanvas();
             },
             
