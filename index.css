@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Standard Kaiti stack for Chinese handwriting style */
+.font-kaiti {
+  font-family: "KaiTi", "STKaiti", "楷体", "楷体_GB2312", "SimKai", serif;
+}
+
+/* Handwriting font fallback for header */
+.font-handwriting {
+  font-family: 'Ma Shan Zheng', cursive;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    background: white;
+  }
+  body {
+    background: white;
+  }
+}

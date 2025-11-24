@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
@@ -6,51 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>小小书法家 - AI练字</title>
     <meta name="description" content="小学生在线练字生成器" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            animation: {
-              'pop-in': 'popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            },
-            keyframes: {
-              popIn: {
-                '0%': { opacity: '0', transform: 'scale(0.95)' },
-                '100%': { opacity: '1', transform: 'scale(1)' },
-              }
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-      /* Standard Kaiti stack for Chinese handwriting style */
-      .font-kaiti {
-        font-family: "KaiTi", "STKaiti", "楷体", "楷体_GB2312", "SimKai", serif;
-      }
-      
-      /* Handwriting font fallback for header */
-      .font-handwriting {
-        font-family: 'Ma Shan Zheng', cursive;
-      }
-
-      @media print {
-        .no-print {
-          display: none !important;
-        }
-        .print-container {
-          width: 100%;
-          margin: 0;
-          padding: 0;
-          box-shadow: none;
-          background: white;
-        }
-        body {
-          background: white;
-        }
-      }
-    </style>
+    <!-- Scripts removed: Tailwind CDN and config, styles moved to index.css -->
 <script type="importmap">
 {
   "imports": {
